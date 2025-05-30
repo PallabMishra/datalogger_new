@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stacked Percentage Bar Chart</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    canvas {
+      max-width: 700px;
+      margin: 30px auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<select id="voltageFilter">
+  <option value="all">All Voltages</option>
+  <option value="100V">100V</option>
+  <option value="120V">120V</option>
+  <option value="140V">140V</option>
+  <option value="160V">160V</option>
+</select>
+
+<canvas id="myChart" width="700" height="400"></canvas>
+
+<script>
+  const ctx = document.getElementById('myChart').getContext('2d');
+  const maxVisibleDayIndex = 6; // max visible day index
+
+  // Sample data structure with daily data for each voltage type
+  const allData = {
+    weekly: {
+      labels: ['Day0', 'Day1', 'Day2', 'Day3', 'Day4', 'Day5', 'Day6'],
+      datasets: [
+        {
+          label: '100V',
+          data: [10, 20, 30, 15, 10, 5, 10],
+          backgroundColor: 'rgba(255, 99, 132, 0.7)',
+          stack: 'Stack 0'
+        },
+        {
+          label: '120V',
+          data: [15, 10, 20, 30, 15, 10, 5],
+          backgroundColor: 'rgba(54, 162, 235, 0.7)',
+          stack: 'Stack 0'
+        },
+        {
+          label: '140V',
+          data: [5, 10, 5, 10, 20, 30, 15],
+          backgroundColor: 'rgba(255, 206, 86, 0.7)',
+          stack: 'Stack 0'
+        },
+        {
+          label: '160V',
+          data: [20, 15, 10, 5, 10, 20, 30],
+          backgroundColor: 'rgba(75, 192, 192, 0.7)',
+          stack: 'Stack 0'
+        }
+      ]
+    },
+    // Monthly and yearly data can be structured similarly
+    monthly: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+      datasets: [
+        {
+          label: '100V',
+          data: [120, 140, 130, 150, 110, 100, 120],
+          backgroundColor: 'rgba(255, 99, 132, 0.7)',
+          stack: 'Stack 0'
+        },
+        {
+          label: '120V',
+          data: [130, 120, 140, 110, 100, 120, 130],
+          backgroundColor: 'rgba(54, 162, 235, 0.7)',
+          stack: 'Stack 0'
+        },
+        {
+          label: '140V',
+          data: [100, 110, 120, 130, 140, 150, 100],
+          backgroundColor: 'rgba(255, 206, 86, 0.7)',
+          stack: 'Stack 0'
+        },
+        {
+          label: '160V',
+          data: [150, 130, 110, 120, 130, 140, 150],
+          backgroundColor: 'rgba(75, 192, 192, 0.7)',
+          stack: 'Stack 0'
+        }
+      ]
+    },
+    yearly: {
+      labels: ['2018', '2019', '2020', '2021', '2022', '2023', '2024'],
+      datasets: [
+        {
+          label: '100V',
+          data: [1400, 1500, 1450, 1600, 1550, 1650, 1700],
+          backgroundColor: 'rgba(255, 99, 132, 0.7)',
+          stack: 'Stack 0'
+        },
+        {
+          label: '120V',
+          data: [1500, 1400, 1500, 1550, 1600, 1500, 1450],
+          backgroundColor: 'rgba(54, 162, 235, 0.7)',
+          stack: 'Stack 0'
+        },
+        {
+          label: '140V',
+          data: [1300, 1350, 1400, 1450, 1500, 1550, 1600],
+          backgroundColor: 'rgba(255, 206, 86, 0.7)',
+          stack: 'Stack 0'
+        },
+        {
+          label: '160V',
+          data: [1600, 1550, 1500, 1450, 1400, 1350, 1300],
+          backgroundColor: 'rgba(75, 192, 192, 0.7)',
+          stack: 'Stack 0'
+        }
+      ]
+    }
+  };
+
+  // Function to convert datasets to percentage per day/month/year
+  function convertToPercentageDatasets(baseData, voltageFilter, maxVisibleIndex) {
+    const numPoints = baseData.labels.length;
+
+    // Calculate total per data point (day/month/year)
+    let totals = new Array(numPoints).fill(0);
+    baseData.datasets.forEach(ds => {
+      if (voltageFilter === 'all' || ds.label === voltageFilter) {
+        ds.data.forEach((val, idx) => {
+          if (idx <= maxVisibleIndex) {
+            totals[idx] += val;
+          }
+        });
+      }
+    });
+
+    // Build new datasets with percentages
+    return baseData.datasets
+      .filter(ds => voltageFilter === 'all' || ds.label === voltageFilter)
+      .map(ds => {
+        const percentData = ds.data.map((val, idx) => {
+          if (idx <= maxVisibleIndex && totals[idx] > 0) {
+            return (val / totals[idx]) * 100;
+          } else {
+            return 0;
+          }
+        });
+
+        // Gray out bars beyond visible index
+        const bgColors = ds.data.map((_, idx) =>
+          idx <= maxVisibleIndex ? ds.backgroundColor : '#d3d3d3'
+        );
+
+        return {
+          ...ds,
+          data: percentData,
+          backgroundColor: bgColors,
+          stack: 'Stack 0',
+          borderWidth: 1,
+          borderColor: '#ffffff',
+        };
+      });
+  }
+
+  // Initialize chart with weekly data, all voltages
+  const initialVoltageFilter = 'all';
+  const initialBaseData = allData.weekly;
+
+  const chartConfig = {
+    type: 'bar',
+    data: {
+      labels: initialBaseData.labels,
+      datasets: convertToPercentageDatasets(initialBaseData, initialVoltageFilter, maxVisibleDayIndex)
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: {
+          stacked: true,
+          title: {
+            display: true,
+            text: 'Day'
+          }
+        },
+        y: {
+          stacked: true,
+          min: 0,
+          max: 100,
+          title: {
+            display: true,
+            text: 'Percentage (%)'
+          },
+          ticks: {
+            callback: val => val + '%'
+          }
+        }
+      },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: context => {
+              const label = context.dataset.label || '';
+              const val = context.parsed.y || 0;
+              return `${label}: ${val.toFixed(1)}%`;
+            }
+          }
+        },
+        legend: {
+          position: 'top',
+        },
+      }
+    }
+  };
+
+  const myChart = new Chart(ctx, chartConfig);
+
+  // Function to update chart for weekly data with filter
+  function updateWeeklyChartData(voltageFilter) {
+    const baseData = allData.weekly;
+    myChart.data.labels = baseData.labels;
+    myChart.data.datasets = convertToPercentageDatasets(baseData, voltageFilter, maxVisibleDayIndex);
+    myChart.options.scales.x.title.text = 'Day';
+    myChart.options.scales.y.min = 0;
+    myChart.options.scales.y.max = 100;
+    myChart.update();
+  }
+
+  // Function to update chart for monthly data with filter
+  function updateMonthlyChartData(voltageFilter) {
+    const baseData = allData.monthly;
+    myChart.data.labels = baseData.labels;
+    myChart.data.datasets = convertToPercentageDatasets(baseData, voltageFilter, baseData.labels.length - 1);
+    myChart.options.scales.x.title.text = 'Month';
+    myChart.options.scales.y.min = 0;
+    myChart.options.scales.y.max = 100;
+    myChart.update();
+  }
+
+  // Function to update chart for yearly data with filter
+  function updateYearlyChartData(voltageFilter) {
+    const baseData = allData.yearly;
+    myChart.data.labels = baseData.labels;
+    myChart.data.datasets = convertToPercentageDatasets(baseData, voltageFilter, baseData.labels.length - 1);
+    myChart.options.scales.x.title.text = 'Year';
+    myChart.options.scales.y.min = 0;
+    myChart.options.scales.y.max = 100;
+    myChart.update();
+  }
+
+  // Example: update based on dropdown voltage filter
+  document.getElementById('voltageFilter').addEventListener('change', (e) => {
+    const filter = e.target.value;
+    updateWeeklyChartData(filter);
+  });
+
+  // Initially draw with default filter
+  updateWeeklyChartData(initialVoltageFilter);
+
+  // You can call updateMonthlyChartData('all') or updateYearlyChartData('120V') to update accordingly
+
+</script>
+
+</body>
+</html>
