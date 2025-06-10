@@ -114,8 +114,12 @@
             top: 80px;
         }
 
-        .filter-button {
+      .filter-button {
             background-color: #ffa500;
+        }
+
+        .filter-button-new {
+            background-color: #40ff00;
         }
 
 
@@ -183,6 +187,20 @@
             color: #a53232;
             border: 1.5px solid #f7a2a2;
         }
+
+        .devices-uptime {
+            background-color: #bbb0fa;
+            /* Light green */
+            color: #110981;
+            /* Dark green text (fully visible) */
+            border: 1.5px solid #f7a2a2;
+            /* Light red border */
+            padding: 10px;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
 
         .analytics {
             background-color: #d7c7f9;
@@ -784,6 +802,14 @@
             gap: 12px;
             flex-wrap: nowrap;
         }
+
+        .filter {
+            position: relative;
+            display: inline-block;
+            margin: 10px;
+        }
+
+        
     </style>
 </head>
 
@@ -823,6 +849,20 @@
                                 All</small></span>
                     </div>
                     <div id="districtCheckboxContainer"></div>
+                </div>
+            </div>
+
+            <div class="dropdown-container">
+                <button class="custom-multiselect" onclick="toggleBranchDropdown()">Select Branch</button>
+                <div class="dropdown-checkboxes" id="branchList">
+                    <input type="text" placeholder="Search branch..." onkeyup="filterBranches(this.value)" />
+                    <div class="action-buttons">
+                        <span class="icon-button" title="Select All" onclick="selectAllBranches()">✅ <small>Select
+                                All</small></span>
+                        <span class="icon-button" title="Clear All" onclick="clearAllBranches()">❌ <small>Clear
+                                All</small></span>
+                    </div>
+                    <div id="branchCheckboxContainer"></div>
                 </div>
             </div>
 
@@ -880,6 +920,10 @@
             <h3>Devices Offline</h3>
             <p>1,234</p>
         </div>
+        <div class="card devices-uptime">
+            <h3> Cumulative Uptime</h3>
+            <p>28H</p>
+        </div>
 
     </div>
     <div class="tab-container" style="display: flex; align-items: center; gap: 10px;">
@@ -907,12 +951,14 @@
 
         <select id="voltageBandSelect" style="font-family: monospace;">
             <option value="all" selected>All Voltage Bands</option>
-            <option value="<150">☐ &lt;150</option>
+            <option value="<150">☐ &lt;130</option>
+            <option value="130-150">☐ 130-150</option>
             <option value="150-180">☐ 150-180</option>
             <option value="180-210">☐ 180-210</option>
             <option value="210-250">☐ 210-250</option>
             <option value=">250">☐ &gt;250</option>
         </select>
+
 
     </div>
 
@@ -924,6 +970,53 @@
     </div>
 
     <script>
+
+        function toggleBranchDropdown() {
+            document.getElementById("branchList").classList.toggle("show");
+        }
+
+        function filterBranches(searchText) {
+            const container = document.getElementById("branchCheckboxContainer");
+            const checkboxes = container.querySelectorAll("label");
+            checkboxes.forEach(label => {
+                const text = label.textContent.toLowerCase();
+                label.style.display = text.includes(searchText.toLowerCase()) ? "block" : "none";
+            });
+        }
+
+        function selectAllBranches() {
+            const checkboxes = document.querySelectorAll("#branchCheckboxContainer input[type='checkbox']");
+            checkboxes.forEach(cb => cb.checked = true);
+        }
+
+        function clearAllBranches() {
+            const checkboxes = document.querySelectorAll("#branchCheckboxContainer input[type='checkbox']");
+            checkboxes.forEach(cb => cb.checked = false);
+        }
+
+        // Add dummy branches on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            const branches = [
+                "Central Branch",
+                "North Zone Branch",
+                "South Division",
+                "East Power Unit",
+                "West Operations",
+                "Metro City Branch",
+                "Rural Service Center"
+            ];
+            const container = document.getElementById("branchCheckboxContainer");
+            container.innerHTML = "";
+            branches.forEach(branch => {
+                const label = document.createElement("label");
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.value = branch;
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(branch));
+                container.appendChild(label);
+            });
+        });
         function downloadReport() {
             // Dummy user data
             const data = [
@@ -990,27 +1083,26 @@
         }
         window.onload = loadDummyDistricts;
         document.addEventListener("DOMContentLoaded", fetchStates);
-       function fetchStates() {
-    const states = [
-        "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
-        "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
-        "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
-        "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
-        "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
-        "Uttar Pradesh", "Uttarakhand", "West Bengal",
-        "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
-        "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
-    ].sort();
+        function fetchStates() {
+            const states = [
+                "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+                "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
+                "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
+                "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
+                "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
+                "Uttar Pradesh", "Uttarakhand", "West Bengal",
+                "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
+                "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
+            ].sort();
 
-    const container = document.getElementById("statesCheckboxContainer");
-    container.innerHTML = "";
-    states.forEach(state => {
-        const label = document.createElement("label");
-        label.innerHTML = `<input type="checkbox" value="${state}"> ${state}`;
-        container.appendChild(label);
-    });
-}
-
+            const container = document.getElementById("statesCheckboxContainer");
+            container.innerHTML = "";
+            states.forEach(state => {
+                const label = document.createElement("label");
+                label.innerHTML = `<input type="checkbox" value="${state}"> ${state}`;
+                container.appendChild(label);
+            });
+        }
         function toggleDropdown() {
             const list = document.getElementById('stateList');
             list.style.display = list.style.display === 'block' ? 'none' : 'block';
@@ -1070,70 +1162,110 @@
                 districtListContainer.appendChild(districtContainer);
             }
         }
-       const allData = {
-    week: {
-        labels: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-        datasets: (() => {
-            const rawData = [
-                [70, 60, 55, 65, 60, 70, 80],
-                [50, 55, 60, 50, 55, 45, 40],
-                [60, 65, 70, 75, 65, 60, 55],
-                [60, 65, 65, 60, 65, 70, 65],
-                [60, 55, 50, 50, 55, 55, 60]
-            ];
-            const colors = ['#FFFF00', '#FFA500', '#ADD8E6', '#90EE90', '#FF7F7F'];
-            const labels = ['<150V', '150V-180V', '180V-210V', '210V-250V', '>250V'];
-            const totals = rawData[0].map((_, i) => rawData.reduce((sum, band) => sum + band[i], 0));
-            return rawData.map((band, i) => ({
-                label: labels[i],
-                backgroundColor: colors[i],
-                data: band.map((val, j) => parseFloat(((val / totals[j]) * 100).toFixed(2)))
-            }));
-        })()
-    },
+        const allData = {
+            week: {
+                labels: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                datasets: (() => {
+                    const rawData = [
+                        [2, 1, 2, 1, 2, 2, 1],       // <130V
+                        [3, 2, 3, 2, 2, 3, 2],       // 130V-150V
+                        [4, 3, 2, 3, 2, 3, 4],       // <150V
+                        [4, 5, 4, 4, 5, 4, 3],       // 150V-180V
+                        [5, 6, 6, 6, 6, 6, 6],       // 180V-210V
+                        [4, 5, 5, 5, 5, 4, 5],       // 210V-250V
+                        [2, 2, 2, 3, 2, 2, 3]        // >250V
+                    ];
 
-    month: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        datasets: (() => {
-            const rawData = [
-                [70, 60, 55, 65, 60, 70, 80, 75, 60, 65, 50, 45],
-                [50, 55, 60, 50, 55, 45, 40, 50, 60, 55, 50, 45],
-                [60, 65, 70, 75, 65, 60, 55, 60, 65, 70, 60, 55],
-                [60, 65, 65, 60, 65, 70, 65, 60, 55, 60, 65, 70],
-                [60, 55, 50, 50, 55, 55, 60, 50, 45, 50, 55, 60]
-            ];
-            const colors = ['#FFFF00', '#FFA500', '#ADD8E6', '#90EE90', '#FF7F7F'];
-            const labels = ['<150V', '150V-180V', '180V-210V', '210V-250V', '>250V'];
-            const totals = rawData[0].map((_, i) => rawData.reduce((sum, band) => sum + band[i], 0));
-            return rawData.map((band, i) => ({
-                label: labels[i],
-                backgroundColor: colors[i],
-                data: band.map((val, j) => parseFloat(((val / totals[j]) * 100).toFixed(2)))
-            }));
-        })()
-    },
+                    const colors = [
+                        '#D3D3D3',  // <130V - Light Gray
+                        '#FAFAD2',  // 130V-150V - Light Gold
+                        '#F0E68C',  // <150V - Khaki
+                        '#FFDAB9',  // 150V-180V - Peach
+                        '#B0E0E6',  // 180V-210V - Powder Blue
+                        '#98FB98',  // 210V-250V - Pale Green
+                        '#FFB6C1'   // >250V - Light Red
+                    ];
 
-    yearly: {
-        labels: ['2023', '2024', '2025'],
-        datasets: (() => {
-            const rawData = [
-                [70, 60, 55],
-                [50, 55, 60],
-                [60, 65, 70],
-                [60, 65, 65],
-                [60, 55, 50]
-            ];
-            const colors = ['#FFFF00', '#FFA500', '#ADD8E6', '#90EE90', '#FF7F7F'];
-            const labels = ['<150V', '150V-180V', '180V-210V', '210V-250V', '>250V'];
-            const totals = rawData[0].map((_, i) => rawData.reduce((sum, band) => sum + band[i], 0));
-            return rawData.map((band, i) => ({
-                label: labels[i],
-                backgroundColor: colors[i],
-                data: band.map((val, j) => parseFloat(((val / totals[j]) * 100).toFixed(2)))
-            }));
-        })()
-    }
-};
+                    const labels = [
+                        '<130V', '130V-150V', '<150V', '150V-180V',
+                        '180V-210V', '210V-250V', '>250V'
+                    ];
+
+                    return rawData.map((band, i) => ({
+                        label: labels[i],
+                        backgroundColor: colors[i],
+                        data: band.map(val => parseFloat(((val / 24) * 100).toFixed(2))),
+                        originalHours: band
+                    }));
+                })()
+
+            },
+
+            month: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: (() => {
+                    const rawData = [
+                        [2, 2, 2, 1, 2, 2, 2, 1, 1, 1, 2, 2],   // <130V
+                        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],   // 130V-150V
+                        [3, 3, 2, 3, 2, 3, 3, 3, 3, 2, 2, 3],   // <150V
+                        [4, 4, 5, 4, 4, 4, 4, 5, 4, 4, 5, 4],   // 150V-180V
+                        [5, 5, 5, 6, 6, 5, 5, 5, 6, 6, 5, 6],   // 180V-210V
+                        [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5],   // 210V-250V
+                        [2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 2]    // >250V
+                    ];
+
+                    const colors = [
+                        '#D3D3D3', '#FAFAD2', '#F0E68C',
+                        '#FFDAB9', '#B0E0E6', '#98FB98', '#FFB6C1'
+                    ];
+
+                    const labels = [
+                        '<130V', '130V-150V', '<150V', '150V-180V',
+                        '180V-210V', '210V-250V', '>250V'
+                    ];
+
+                    return rawData.map((band, i) => ({
+                        label: labels[i],
+                        backgroundColor: colors[i],
+                        data: band.map(val => parseFloat(((val / 24) * 100).toFixed(2))),
+                        originalHours: band
+                    }));
+                })()
+            },
+
+            yearly: {
+                labels: ['2023', '2024', '2025'],
+                datasets: (() => {
+                    const rawData = [
+                        [2, 2, 2],   // <130V
+                        [2, 2, 2],   // 130V-150V
+                        [3, 3, 3],   // <150V
+                        [4, 4, 4],   // 150V-180V
+                        [5, 5, 5],   // 180V-210V
+                        [6, 6, 6],   // 210V-250V
+                        [2, 2, 2]    // >250V
+                    ];
+
+                    const colors = [
+                        '#D3D3D3', '#FAFAD2', '#F0E68C',
+                        '#FFDAB9', '#B0E0E6', '#98FB98', '#FFB6C1'
+                    ];
+
+                    const labels = [
+                        '<130V', '130V-150V', '<150V', '150V-180V',
+                        '180V-210V', '210V-250V', '>250V'
+                    ];
+
+                    return rawData.map((band, i) => ({
+                        label: labels[i],
+                        backgroundColor: colors[i],
+                        data: band.map(val => parseFloat(((val / 24) * 100).toFixed(2))),
+                        originalHours: band
+                    }));
+                })()
+            }
+        };
+
 
 
         let currentPeriod = 'week';
@@ -1176,9 +1308,14 @@
                 plugins: {
                     tooltip: {
                         callbacks: {
-                            label: context => `${context.dataset.label}: ${context.parsed.y}%`
+                            label: context => {
+                                const percentage = context.parsed.y;
+                                const hours = context.dataset.originalHours?.[context.dataIndex] ?? 0;
+                                return `${context.dataset.label}: ${percentage}% (${hours} hrs)`;
+                            }
                         }
-                    },
+                    }
+                    ,
                     legend: {
                         position: 'bottom'
                     }
@@ -1194,7 +1331,7 @@
                             const value = dataset.data[index];
                             const bg = Array.isArray(dataset.backgroundColor) ? dataset.backgroundColor[index] : dataset.backgroundColor;
                             if (value > 0 && bg !== '#d3d3d3') {
-                                ctx.fillStyle = '#000'; 
+                                ctx.fillStyle = '#000';
                                 ctx.font = '12px Arial';
                                 ctx.textAlign = 'center';
                                 ctx.textBaseline = 'middle';
@@ -1316,8 +1453,6 @@
         updateDisplay();
         updateChartData();
     </script>
-
-
 
 </body>
 

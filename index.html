@@ -273,11 +273,11 @@
         .stats-container {
             display: flex;
             gap: 24px;
-           
+
             justify-content: center;
             flex-wrap: wrap;
-             margin-bottom: 5px;
-    padding-top: 5px;
+            margin-bottom: 5px;
+            padding-top: 5px;
         }
 
         .card {
@@ -413,10 +413,10 @@
 
         #map {
             margin-top: 0px;
-    padding-top: 0px;
+            padding-top: 0px;
             height: 580px;
             position: relative;
-            
+
 
         }
 
@@ -437,53 +437,69 @@
         <div class="navbar-left">Voltage Analytics</div>
 
         <div class="navbar-right">
-
+            <!-- Existing States Dropdown -->
             <div class="dropdown-container">
                 <button class="custom-multiselect" onclick="toggleDropdown()">Select States or UTs</button>
                 <div class="dropdown-checkboxes" id="stateList">
                     <input type="text" placeholder="Search states..." onkeyup="filterStates(this.value)" />
                     <div class="action-buttons">
-                        <span class="icon-button" title="Select All" onclick="selectAllStates()">
-                            ✅ <small>Select All</small>
-                        </span>
-                        <span class="icon-button" title="Clear All" onclick="clearAllStates()">
-                            ❌ <small>Clear All</small>
-                        </span>
+                        <span class="icon-button" title="Select All" onclick="selectAllStates()">✅ <small>Select
+                                All</small></span>
+                        <span class="icon-button" title="Clear All" onclick="clearAllStates()">❌ <small>Clear
+                                All</small></span>
                     </div>
                     <div id="statesCheckboxContainer"></div>
                 </div>
             </div>
 
+            <!-- Existing Districts Dropdown -->
             <div class="dropdown-container">
                 <button class="custom-multiselect" onclick="toggleDistrictDropdown()">Select Districts</button>
                 <div class="dropdown-checkboxes" id="districtList">
                     <input type="text" placeholder="Search..." onkeyup="filterDistricts(this.value)" />
                     <div class="action-buttons">
-                        <span class="icon-button" title="Select All" onclick="selectAllDistricts()">
-                            ✅ <small>Select All</small>
-                        </span>
-                        <span class="icon-button" title="Clear All" onclick="clearAllDistricts()">
-                            ❌ <small>Clear All</small>
-                        </span>
+                        <span class="icon-button" title="Select All" onclick="selectAllDistricts()">✅ <small>Select
+                                All</small></span>
+                        <span class="icon-button" title="Clear All" onclick="clearAllDistricts()">❌ <small>Clear
+                                All</small></span>
                     </div>
                     <div id="districtCheckboxContainer"></div>
                 </div>
             </div>
 
+            <!-- NEW: Branch Dropdown -->
+            <div class="dropdown-container">
+                <button class="custom-multiselect" onclick="toggleBranchDropdown()">Select Branch</button>
+                <div class="dropdown-checkboxes" id="branchList">
+                    <input type="text" placeholder="Search branch..." onkeyup="filterBranches(this.value)" />
+                    <div class="action-buttons">
+                        <span class="icon-button" title="Select All" onclick="selectAllBranches()">✅ <small>Select
+                                All</small></span>
+                        <span class="icon-button" title="Clear All" onclick="clearAllBranches()">❌ <small>Clear
+                                All</small></span>
+                    </div>
+                    <div id="branchCheckboxContainer"></div>
+                </div>
+            </div>
+
+            <!-- Pincode Search -->
             <div class="pincode-search-container">
                 <div class="search-box">
                     <input type="text" id="pincodeSearch" placeholder="Search Pincode" onkeyup="searchPincode()" />
                     <span class="search-icon" onclick="searchPincode()">🔍</span>
                 </div>
             </div>
+
             <button class="filter-button">Filter</button>
-            <button class=".filter-button-new" onclick="toggleReportPopup()">Generate Report</button>
+            <button class="filter-button-new" onclick="toggleReportPopup()">Generate Report</button>
+
             <div class="user-info">
                 Pallab
                 <div class="user-circle">US</div>
             </div>
         </div>
     </nav>
+
 
 
 
@@ -531,6 +547,54 @@
         </div>
     </div>
     <script>
+
+        function toggleBranchDropdown() {
+            document.getElementById("branchList").classList.toggle("show");
+        }
+
+        function filterBranches(searchText) {
+            const container = document.getElementById("branchCheckboxContainer");
+            const checkboxes = container.querySelectorAll("label");
+            checkboxes.forEach(label => {
+                const text = label.textContent.toLowerCase();
+                label.style.display = text.includes(searchText.toLowerCase()) ? "block" : "none";
+            });
+        }
+
+        function selectAllBranches() {
+            const checkboxes = document.querySelectorAll("#branchCheckboxContainer input[type='checkbox']");
+            checkboxes.forEach(cb => cb.checked = true);
+        }
+
+        function clearAllBranches() {
+            const checkboxes = document.querySelectorAll("#branchCheckboxContainer input[type='checkbox']");
+            checkboxes.forEach(cb => cb.checked = false);
+        }
+
+        // Add dummy branches on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            const branches = [
+                "Central Branch",
+                "North Zone Branch",
+                "South Division",
+                "East Power Unit",
+                "West Operations",
+                "Metro City Branch",
+                "Rural Service Center"
+            ];
+            const container = document.getElementById("branchCheckboxContainer");
+            container.innerHTML = "";
+            branches.forEach(branch => {
+                const label = document.createElement("label");
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.value = branch;
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(branch));
+                container.appendChild(label);
+            });
+        });
+
         const dummyKeralaDistricts = [
             "Thiruvananthapuram", "Kollam", "Pathanamthitta", "Alappuzha", "Kottayam",
             "Idukki", "Ernakulam", "Thrissur", "Palakkad", "Malappuram",
@@ -569,25 +633,25 @@
         window.onload = loadDummyDistricts;
         document.addEventListener("DOMContentLoaded", fetchStates);
         function fetchStates() {
-    const states = [
-        "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
-        "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
-        "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
-        "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
-        "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
-        "Uttar Pradesh", "Uttarakhand", "West Bengal",
-        "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
-        "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
-    ].sort();
+            const states = [
+                "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+                "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
+                "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
+                "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
+                "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
+                "Uttar Pradesh", "Uttarakhand", "West Bengal",
+                "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu",
+                "Delhi", "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry"
+            ].sort();
 
-    const container = document.getElementById("statesCheckboxContainer");
-    container.innerHTML = "";
-    states.forEach(state => {
-        const label = document.createElement("label");
-        label.innerHTML = `<input type="checkbox" value="${state}"> ${state}`;
-        container.appendChild(label);
-    });
-}
+            const container = document.getElementById("statesCheckboxContainer");
+            container.innerHTML = "";
+            states.forEach(state => {
+                const label = document.createElement("label");
+                label.innerHTML = `<input type="checkbox" value="${state}"> ${state}`;
+                container.appendChild(label);
+            });
+        }
 
         function toggleDropdown() {
             const list = document.getElementById('stateList');
@@ -870,24 +934,24 @@
                     const path = d3.geo.path().projection(projection);
                     return { path: path, projection: projection };
                 },
-            geographyConfig: {
-    dataUrl: 'https://raw.githubusercontent.com/Anujarya300/bubble_maps/master/data/geography-data/india.topo.json',
-    popupOnHover: true,
-    highlightOnHover: true,
-    borderColor: '#333',
-    borderWidth: 1,
-    popupTemplate: function (geo, data) {
-        return `
+                geographyConfig: {
+                    dataUrl: 'https://raw.githubusercontent.com/Anujarya300/bubble_maps/master/data/geography-data/india.topo.json',
+                    popupOnHover: true,
+                    highlightOnHover: true,
+                    borderColor: '#333',
+                    borderWidth: 1,
+                    popupTemplate: function (geo, data) {
+                        return `
             <div class="hoverinfo">
                 <strong>${geo.properties.name}</strong><br/>
                 Total Devices: 565<br/>
                 Online: 300<br/>
                 Offline: 265
             </div>`;
-    }
-},
-fills: fills,
-data: data
+                    }
+                },
+                fills: fills,
+                data: data
 
             });
 
