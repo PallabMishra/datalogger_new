@@ -22,10 +22,6 @@
             background-color: #f7f2fb;
         }
 
-
-
-
-
         .dropdown-checkboxes {
             position: absolute;
             top: 100%;
@@ -114,7 +110,7 @@
             top: 80px;
         }
 
-      .filter-button {
+        .filter-button {
             background-color: #ffa500;
         }
 
@@ -182,8 +178,6 @@
             border: 1.5px solid #a3d3a5;
         }
 
-      
-
         .devices-uptime {
             background-color: #bbb0fa;
             /* Light green */
@@ -237,7 +231,6 @@
             justify-content: center;
         }
 
-        /* Tabs */
         .tab {
             background-color: #f0f0f5;
             border: 2px solid transparent;
@@ -408,11 +401,6 @@
         .dropdown-menu input[type="checkbox"] {
             margin-right: 8px;
         }
-
-
-
-
-
 
         .dropdown-container {
             position: relative;
@@ -663,43 +651,43 @@
             border: 1.5px solid #a3d3a5;
         }
 
-      .devices-offline {
-    background-color: #f9c2c2;
-    color: #a53232;
-    border: 1.5px solid #f7a2a2;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    transform: scale(1);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    padding: 20px;
-    border-radius: 12px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
+        .devices-offline {
+            background-color: #f9c2c2;
+            color: #a53232;
+            border: 1.5px solid #f7a2a2;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform: scale(1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
 
-  .devices-offline:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  }
+        .devices-offline:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
 
-  .click-me {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%) translateY(10px);
-    font-size: 14px;
-    font-weight: bold;
-    color: #a53232;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.4s ease;
-  }
+        .click-me {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            font-size: 14px;
+            font-weight: bold;
+            color: #a53232;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s ease;
+        }
 
-  .devices-offline:hover .click-me {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+        .devices-offline:hover .click-me {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
 
 
         .analytics {
@@ -837,8 +825,6 @@
             display: inline-block;
             margin: 10px;
         }
-
-        
     </style>
 </head>
 
@@ -945,10 +931,10 @@
             <h3>Devices Online</h3>
             <p>5,678</p>
         </div>
-         <div class="card devices-offline">
+        <div class="card devices-offline">
             <h3>Devices Offline</h3>
             <p>1,234</p>
-<span class="click-me">Click Here</span>
+            <span class="click-me">Click Here</span>
         </div>
         <div class="card devices-uptime">
             <h3> Cumulative Uptime</h3>
@@ -1299,7 +1285,7 @@
 
 
         let currentPeriod = 'week';
-        const maxWeek = 21;
+        const maxWeek = 23;
         let currentWeek = maxWeek;
 
         const today = new Date();
@@ -1387,7 +1373,7 @@
             const periodDisplay = document.getElementById('periodDisplay');
 
             if (currentPeriod === 'week') {
-                periodDisplay.innerText = `Current Week: Week ${currentWeek}`;
+                periodDisplay.innerText = `Current Week: 9-13 June,2025 (Week ${currentWeek})`;
                 updateWeekChartData();
             } else if (currentPeriod === 'month') {
                 periodDisplay.innerText = `Current Year: ${currentMonthYear}`;
