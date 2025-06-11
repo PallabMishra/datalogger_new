@@ -304,11 +304,43 @@
             border: 1.5px solid #a3d3a5;
         }
 
-        .devices-offline {
-            background-color: #f9c2c2;
-            color: #a53232;
-            border: 1.5px solid #f7a2a2;
-        }
+.devices-offline {
+    background-color: #f9c2c2;
+    color: #a53232;
+    border: 1.5px solid #f7a2a2;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transform: scale(1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .devices-offline:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .click-me {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    font-size: 14px;
+    font-weight: bold;
+    color: #a53232;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s ease;
+  }
+
+  .devices-offline:hover .click-me {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 
         .analytics {
             background-color: #d7c7f9;
@@ -515,6 +547,7 @@
         <div class="card devices-offline">
             <h3>Devices Offline</h3>
             <p>1,234</p>
+<span class="click-me">Click Here</span>
         </div>
         <div class="card analytics" tabindex="0" role="button" aria-pressed="false" id="analyticsCard">
             <h3>Analytics</h3>
