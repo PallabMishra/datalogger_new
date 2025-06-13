@@ -342,7 +342,45 @@
     transform: translateX(-50%) translateY(0);
   }
 
-        .analytics {
+  .analytics {
+      background-color: #d7c7f9;
+            color: #532e99;
+    border: 1.5px solid #3643f9;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transform: scale(1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .analytics:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .click-me-ana {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    font-size: 14px;
+    font-weight: bold;
+ color: #532e99;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s ease;
+  }
+
+  .analytics:hover .click-me-ana {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+        /* .analytics {
             background-color: #d7c7f9;
             color: #532e99;
             border: 1.5px solid #bfa0f9;
@@ -352,7 +390,7 @@
 
         .analytics:hover {
             background-color: #c4b1f5;
-        }
+        } */
 
         .card h3,
         .card p {
@@ -551,7 +589,7 @@
         </div>
         <div class="card analytics" tabindex="0" role="button" aria-pressed="false" id="analyticsCard">
             <h3>Analytics</h3>
-            <p>( Click here )</p>
+            <span class="click-me-ana">Click Here</span>
         </div>
     </div>
     <!-- <h2>India Map</h2> -->
@@ -566,13 +604,8 @@
             <span class="popup-close-icon" onclick="toggleReportPopup()">×</span>
             <h3>Generate Report</h3>
             <p id="selectionInfo">You selected: State - N/A, District - N/A, Pincode - N/A</p>
-            <label for="reportType">Select Report Type:</label>
-            <select id="reportType" onchange="updateReportOptions()">
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-                <option value="yearly">Yearly</option>
-            </select>
+           
+           
             <div id="dynamicOptions" style="margin-top: 10px;"></div>
             <div style="margin-top: 15px;">
                 <button onclick="downloadReport()">Download</button>
@@ -777,40 +810,7 @@
             const value = document.getElementById("pincodeSearch").value;
             console.log("Searching Pincode:", value); // Replace this with your actual search logic
         }
-        function updateReportOptions() {
-            const reportType = document.getElementById('reportType').value;
-            const dynamicDiv = document.getElementById('dynamicOptions');
-            dynamicDiv.innerHTML = ''; // Clear previous inputs
-            if (reportType === 'weekly') {
-                const weeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 52'];
-                let weekSelect = '<label for="weekSelect">Select Week:</label><select id="weekSelect">';
-                weeks.forEach(week => {
-                    weekSelect += `<option value="${week.toLowerCase().replace(' ', '')}">${week}</option>`;
-                });
-                weekSelect += '</select>';
-                dynamicDiv.innerHTML = weekSelect;
-            } else if (reportType === 'monthly') {
-                const months = [
-                    'January', 'February', 'March', 'April', 'May', 'June',
-                    'July', 'August', 'September', 'October', 'November', 'December'
-                ];
-                let monthSelect = '<label for="monthSelect">Select Month:</label><select id="monthSelect">';
-                months.forEach(month => {
-                    monthSelect += `<option value="${month.toLowerCase()}">${month}</option>`;
-                });
-                monthSelect += '</select>';
-                dynamicDiv.innerHTML = monthSelect;
 
-            } else if (reportType === 'yearly') {
-                const currentYear = new Date().getFullYear();
-                let yearSelect = '<label for="yearSelect">Select Year:</label><select id="yearSelect">';
-                for (let i = currentYear; i >= currentYear - 2; i--) {
-                    yearSelect += `<option value="${i}">${i}</option>`;
-                }
-                yearSelect += '</select>';
-                dynamicDiv.innerHTML = yearSelect;
-            }
-        }
 
         function togglePincodeDropdown() {
             document.getElementById("pincodeList").classList.toggle("show");
